@@ -1,0 +1,46 @@
+<html>
+  <body>
+    <h1>Hi</h1>
+    <input id="message-text" />
+    <button id="send-message" onclick="sendMessage()">Send</button>
+    <div id="message-box"></div>
+    <button id="get-messages" onclick="getMessage()">Get messages</button>
+    <script type="text/javascript">
+      const sendMessage = () => {
+        const input = document.getElementById('message-text');
+        const text = input.value;
+
+        fetch('/message', {
+          method: 'POST',
+          body: JSON.stringify({ text }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }).then(() => {
+          input.value = '';
+          getMessage();
+        });
+      };
+
+      const getMessage = () => {
+        fetch('/getMessages').then((response) => {
+          response.text().then((json_body) => {
+            document.getElementById('message-box').innerHTML = '';
+            const messages = JSON.parse(json_body).messages;
+            messages.forEach((message, i) => {
+              const color = i % 2 ? 'red' : 'blue';
+              document.getElementById('message-box').innerHTML += '<div style="color: ' + color + '">' + message + '</div>';
+            });
+          });
+        });
+      };
+    </script>
+    <style>
+      #message-box {
+        height: 200px;
+        width: 200px;
+        border: 1px solid black;
+      }
+    </style>
+  </body>
+</html>
