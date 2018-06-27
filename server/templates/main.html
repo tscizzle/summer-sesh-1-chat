@@ -2,6 +2,7 @@
   <body>
     <h1>Hi</h1>
     <input id="message-text" />
+    <input id="user-text" />
     <button id="send-message" onclick="sendMessage()">Send</button>
     <div id="message-box"></div>
     <button id="get-messages" onclick="getMessage()">Get messages</button>
@@ -10,9 +11,12 @@
         const input = document.getElementById('message-text');
         const text = input.value;
 
+        const userinput = document.getElementById('user-text');
+        const usertext = userinput.value;
+
         fetch('/message', {
           method: 'POST',
-          body: JSON.stringify({ text }),
+          body: JSON.stringify({ text: text, user: usertext }),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -26,10 +30,18 @@
         fetch('/getMessages').then((response) => {
           response.text().then((json_body) => {
             document.getElementById('message-box').innerHTML = '';
-            const messages = JSON.parse(json_body).messages;
+            const parsed = JSON.parse(json_body)
+            const messages = parsed.messages;
+            const users = parsed.users;
+            const colors = parsed.colors;
             messages.forEach((message, i) => {
-              const color = i % 2 ? 'red' : 'blue';
-              document.getElementById('message-box').innerHTML += '<div style="color: ' + color + '">' + message + '</div>';
+              let color = "black";
+              users.forEach((user, i) => {
+                if (message.user === user){
+                    color = colors[i]
+                }
+              });
+              document.getElementById('message-box').innerHTML += '<div style="color: ' + color + '">' + message.message + '</div>';
             });
           });
         });
