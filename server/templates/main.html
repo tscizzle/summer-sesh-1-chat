@@ -34,10 +34,10 @@
             const messages = parsed.messages;
             const users = parsed.users;
             const colors = parsed.colors;
-            messages.forEach((message, i) => {
+            messages.forEach((message) => {
               let color = "black";
               users.forEach((user, i) => {
-                if (message.user === user){
+                if (message.user === user.user){
                     color = colors[i]
                 }
               });
